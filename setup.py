@@ -20,7 +20,7 @@ docs_require = [
 ]
 
 tornado_require = [
-    'tornado==4.0.2'
+    'tornado>=4.0.2'
 ]
 
 async_require = []  # see below
@@ -58,7 +58,7 @@ with open('README.rst') as fh:
 
 setup(
     name='zeep',
-    version='2.2.0',
+    version='2.4.0',
     description='A modern/fast Python SOAP client based on lxml / requests',
     long_description=long_description,
     author="Michael van Tellingen",
@@ -76,7 +76,7 @@ setup(
     },
     entry_points={},
     package_dir={'': 'src'},
-    packages=find_packages('src'),
+    packages=['zeep'],
     include_package_data=True,
 
     license='MIT',
