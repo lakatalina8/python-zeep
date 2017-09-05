@@ -38,11 +38,28 @@ class TornadoAsyncTransport(Transport):
         client = httpclient.HTTPClient()
         kwargs = {
             'method': 'GET',
+            'validate_cert': self.session.verify,
+            'client_key': self._get_client_key(),
+            'client_cert': self._get_client_cert(),
             'request_timeout': self.load_timeout
         }
         http_req = httpclient.HTTPRequest(url, **kwargs)
         response = client.fetch(http_req)
         return response.body
+
+    def _get_client_cert(self):
+        if self.session.cert:
+            if type(self.session.cert) is str:
+                return self.session.cert
+            elif type(self.session.cert) is tuple:
+                return self.session.cert[0]
+        return None
+
+    def _get_client_key(self):
+        if self.session.cert:
+            if type(self.session.cert) is tuple:
+                return self.session.cert[1]
+        return None
 
     @gen.coroutine
     def post(self, address, message, headers):
@@ -91,17 +108,6 @@ class TornadoAsyncTransport(Transport):
             else:
                 raise StandardError('Not supported authentication.')
 
-        # extracting client cert
-        client_cert = None
-        client_key = None
-
-        if self.session.cert:
-            if type(self.session.cert) is str:
-                client_cert = self.session.cert
-            elif type(self.session.cert) is tuple:
-                client_cert = self.session.cert[0]
-                client_key = self.session.cert[1]
-
         session_headers = dict(self.session.headers.items())
 
         kwargs = {
@@ -112,8 +118,8 @@ class TornadoAsyncTransport(Transport):
             'auth_password': auth_password,
             'auth_mode': auth_mode,
             'validate_cert': self.session.verify,
-            'client_key': client_key,
-            'client_cert': client_cert
+            'client_key': self._get_client_key(),
+            'client_cert': self._get_client_cert()
         }
 
         if message:
