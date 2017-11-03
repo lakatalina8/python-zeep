@@ -40,7 +40,7 @@ def parse_xml(content, transport, base_url=None, strict=True,
 
     """
     recover = not strict
-    parser = etree.XMLParser(remove_comments=True, resolve_entities=False,
+    parser = etree.XMLParser(collect_ids=False, remove_comments=True, resolve_entities=False,
                              recover=recover, huge_tree=xml_huge_tree)
     parser.resolvers.add(ImportResolver(transport))
     try:
